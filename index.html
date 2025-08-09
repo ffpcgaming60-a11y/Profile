@@ -21,17 +21,19 @@
             align-items: center;
         }
 
-        /* ব্যাকগ্রাউন্ড ভিডিওর জন্য স্টাইল */
+        /* ব্যাকগ্রাউন্ড ভিডিওর জন্য নতুন স্টাইল */
         #video-background {
             position: fixed;
-            right: 0;
-            bottom: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             min-width: 100%;
             min-height: 100%;
             width: auto;
             height: auto;
             z-index: -1;
             filter: brightness(0.6);
+            object-fit: cover; /* ভিডিওর অনুপাত ঠিক রাখার জন্য */
         }
 
         /* মূল কন্টেন্ট অ্যানিমেশন */
@@ -287,4 +289,3 @@
     </script>
 </body>
 </html>
-
