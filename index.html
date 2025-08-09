@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VISITOR</title>
+    <!-- বাংলা ফন্টের জন্য Google Fonts এবং Tailwind CSS ব্যবহার করা হয়েছে -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* কাস্টম ফন্ট এবং অ্যানিমেশনের জন্য স্টাইল */
+        body {
+            font-family: 'Noto Sans Bengali', sans-serif;
+            margin: 0;
+            position: relative;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background-color: #111827;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* ব্যাকগ্রাউন্ড ভিডিওর জন্য স্টাইল */
+        #video-background {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -1;
+            filter: brightness(0.6);
+        }
+
+        /* মূল কন্টেন্ট অ্যানিমেশন */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .animate-fadeIn {
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+
+        /* RGB বর্ডার অ্যানিমেশন */
+        @keyframes rgbBorderAnimation {
+            0% {
+                border-color: #ff0000;
+            }
+            16% {
+                border-color: #ff7f00;
+            }
+            33% {
+                border-color: #ffff00;
+            }
+            50% {
+                border-color: #00ff00;
+            }
+            66% {
+                border-color: #0000ff;
+            }
+            83% {
+                border-color: #4b0082;
+            }
+            100% {
+                border-color: #ff0000;
+            }
+        }
+
+        .rgb-border-animated {
+            animation: rgbBorderAnimation 4s linear infinite;
+        }
+
+        /* RGB বাটনের জন্য নতুন অ্যানিমেশন - দ্রুত এবং বেশি রঙ যোগ করা হয়েছে */
+        @keyframes rgbConicAnimation {
+            from {
+                background-position: 0% center;
+            }
+            to {
+                background-position: -200% center;
+            }
+        }
+
+        .rgb-conic-animated {
+            background-image: conic-gradient(
+                #ff0000 0%, #ff1a00 1%, #ff3300 2%, #ff4c00 3%, #ff6600 4%,
+                #ff8000 5%, #ff9900 6%, #ffb300 7%, #ffcc00 8%, #ffe500 9%,
+                #ffff00 10%, #e5ff00 11%, #ccff00 12%, #b3ff00 13%, #99ff00 14%,
+                #80ff00 15%, #66ff00 16%, #4cff00 17%, #33ff00 18%, #1aff00 19%,
+                #00ff00 20%, #00ff1a 21%, #00ff33 22%, #00ff4c 23%, #00ff66 24%,
+                #00ff80 25%, #00ff99 26%, #00ffb3 27%, #00ffcc 28%, #00ffe5 29%,
+                #00ffff 30%, #00e5ff 31%, #00ccff 32%, #00b3ff 33%, #0099ff 34%,
+                #0080ff 35%, #0066ff 36%, #004cff 37%, #0033ff 38%, #001aff 39%,
+                #0000ff 40%, #1a00ff 41%, #3300ff 42%, #4c00ff 43%, #6600ff 44%,
+                #8000ff 45%, #9900ff 46%, #b300ff 47%, #cc00ff 48%, #e500ff 49%,
+                #ff00ff 50%, #ff00e5 51%, #ff00cc 52%, #ff00b3 53%, #ff0099 54%,
+                #ff0080 55%, #ff0066 56%, #ff004c 57%, #ff0033 58%, #ff001a 59%,
+                #ff0000 60%, #ff1a00 61%, #ff3300 62%, #ff4c00 63%, #ff6600 64%,
+                #ff8000 65%, #ff9900 66%, #ffb300 67%, #ffcc00 68%, #ffe500 69%,
+                #ffff00 70%, #e5ff00 71%, #ccff00 72%, #b3ff00 73%, #99ff00 74%,
+                #80ff00 75%, #66ff00 76%, #4cff00 77%, #33ff00 78%, #1aff00 79%,
+                #00ff00 80%, #00ff1a 81%, #00ff33 82%, #00ff4c 83%, #00ff66 84%,
+                #00ff80 85%, #00ff99 86%, #00ffb3 87%, #00ffcc 88%, #00ffe5 89%,
+                #00ffff 90%, #00e5ff 91%, #00ccff 92%, #00b3ff 93%, #0099ff 94%,
+                #0080ff 95%, #0066ff 96%, #004cff 97%, #0033ff 98%, #001aff 99%,
+                #0000ff 100%
+            );
+            background-size: 200% auto;
+            animation: rgbConicAnimation 2s linear infinite; /* অ্যানিমেশনের গতি কমানো হয়েছে */
+        }
+
+        /* মোবাইলের জন্য ফ্লেক্স লেআউট ঠিক করা হয়েছে */
+        @media (max-width: 640px) {
+            .ff-profile {
+                flex-direction: column;
+                text-align: center;
+                align-items: center;
+            }
+        }
+
+        /* স্ট্যাটাস ডটের অ্যানিমেশন */
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        .status-dot-animated {
+            animation: pulse 1.5s infinite;
+        }
+
+    </style>
+</head>
+<body class="text-white">
+
+    <!-- ব্যাকগ্রাউন্ড ভিডিও -->
+    <video id="video-background" autoplay loop muted playsinline>
+        <source src="https://rr2---sn-h557snzy.googlevideo.com/videoplayback?expire=1754774129&ei=EWaXaKbgM_PQp-oPpajZmQE&ip=176.1.194.85&id=o-ACi3rXLjWm302ZR7jFFFWF3U3kCf0AXYVwW0ejxQAFc5&itag=271&aitags=133%2C134%2C135%2C136%2C137%2C160%2C242%2C243%2C244%2C247%2C248%2C271%2C278%2C313%2C394%2C395%2C396%2C397%2C398%2C399%2C400%2C401%2C598&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AY1jyLMZ6pXc_IF4xAvlQnNFpJpUiDuIpBWF4BjKtIPXIb4EQxRnUmUR3wIeM5y85SnUwy4RS7aNXlaC&vprv=1&svpuc=1&mime=video%2Fwebm&ns=ksdUm1jFFpUtDK269Ee3VXEQ&rqh=1&gir=yes&clen=68936741&dur=116.240&lmt=1754268409891347&keepalive=yes&fexp=24350590,24350737,24350827,24351316,24351318,24351528,24352220,24352460,24352517,24352519,24352559,24352568,24352574,24352693,24352695,24352805,24352807,24352882,24352884,24352961,51331020,51548755&c=MWEB&sefc=1&txp=4432534&n=QxIkgg-h3gbdfw&sparams=expire%2Cei%2Cip%2Cid%2Caitags%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cdur%2Clmt&sig=AJfQdSswRgIhAJbbtxYoMjTQpP5NsiadWFesblACChS6KTHjfs95npQ0AiEA1OF4Do_mBHTyi0rC09KbIg_WQ7YFn9j35M46wEb1KAY%3D&pot=MnZNcwJX5aEfZU1NQ0n6rB45Bn_peaP1v6rkLXhDaG_a6KavX-yX6Mq2I6ylwVYK3LzJ1t0pN9zSkmdLKEiIG0HVz6Sbj2tQh7lIjHOgiSJ4JdTyqm2yEQHLjgR7aPcMLflJZGeH5hwbzCQu0H6uJT4hGrQY5KpC&rm=sn-uxax4vopj5qx-q0n67d,sn-4g5ekl7z&rrc=79,104&req_id=59f91347b432a3ee&rms=rdu,au&redirect_counter=2&cms_redirect=yes&cmsv=e&ipbypass=yes&met=1754752532,&mh=V_&mip=103.158.211.80&mm=29&mn=sn-h557snzy&ms=rdu&mt=1754751521&mv=u&mvi=2&pl=24&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAPr4E4BCETa5tgXjaJXfdT9ya1UxzlwL8Rg8HghDVLb8AiATtcXuHOJKOO4K9_yyFNjbQhe7viYNjMppGCvovvp2aQ%3D%3D" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- স্প্ল্যাশ স্ক্রিন -->
+    <div id="splash-screen" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex flex-col justify-center items-center z-50 transition-opacity duration-500">
+        <h1 class="text-white text-5xl md:text-7xl font-extrabold mb-8 animate-pulse">CAN YOU SEE THIS</h1>
+        <button id="ok-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-12 rounded-full shadow-lg transition-transform duration-300 ease-in-out transform hover:scale-110">YES</button>
+    </div>
+
+    <!-- মূল কন্টেইনার -->
+    <div id="main-content" class="relative container w-full max-w-xl mx-auto my-5 bg-black bg-opacity-10 backdrop-filter backdrop-blur-sm p-4 md:p-10 rounded-2xl shadow-2xl border-4 border-transparent animate-fadeIn rgb-border-animated">
+        
+        <!-- ভিজিটর কাউন্টার -->
+        <div class="absolute top-4 left-4 flex items-center text-gray-300 text-sm z-10">
+            <span class="text-xl mr-2">👁️‍🗨️</span>
+            <span class="text-xl font-bold">64348</span>
+        </div>
+
+        <!-- প্রোফাইল পিকচার -->
+        <div class="flex justify-center">
+            <img src="https://scontent.fdac24-2.fna.fbcdn.net/v/t39.30808-1/511014433_122175827504354519_4007918081686926533_n.jpg?stp=c0.147.1024.1024a_dst-jpg_s200x200_tt6&_nc_cat=105&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeGQsMF0iA04RE_Yo3wI5Hq90CkWnJbtpGLQKRaclu2kYtN9r92KJ7RlsiJokgCn8Rgi_rA3KhrepZGhyh7SS3I1&_nc_ohc=2g9xQ1VCcYcQ7kNvwEi-mV_&_nc_oc=AdldRDNR37-PYVYTh6Suw393tYhdt66nTgSgmBcmXjkEdYU3GQURVlPHeP_uFdXXvaw&_nc_zt=24&_nc_ht=scontent.fdac24-2.fna&_nc_gid=DqeMcmSuwM09ja8iWzg7EQ&oh=00_AfV1nk3K-bQgdwHAez9yhQijZ5_C4uDM9_HoHI-KD1t1Bw&oe=689A58A1" alt="Profile Picture" class="w-32 h-32 object-cover rounded-xl border-4 border-transparent mb-5 shadow-lg rgb-border-animated" onerror="this.onerror=null;this.src='https://placehold.co/128x128/333333/ffffff?text=Profile';">
+        </div>
+        
+        <!-- ব্যবহারকারীর নাম -->
+        <h1 class="text-4xl md:text-5xl font-bold mb-1 tracking-wide text-center">᙭ ᑕᖇᗩᗯᑎ ᖴᖴ</h1>
+        
+        <!-- সাবস্ক্রাইব বোতাম -->
+        <a href="http://www.youtube.com/@xcrawnff-xcf" class="rgb-conic-animated text-white no-underline font-bold py-2 px-4 rounded-lg mb-5 transition-transform duration-300 ease-in-out hover:scale-105 hover:translate-y-[-3px] hover:shadow-xl text-center block mt-5" target="_blank">SUBSCRIBE</a>
+        
+        <!-- ফ্রি ফায়ার প্রোফাইল -->
+        <div class="ff-profile bg-gray-900 bg-opacity-80 p-3 md:p-4 rounded-lg shadow-md mb-5 flex items-center gap-5 w-full max-w-md mx-auto transition-transform duration-300 ease-in-out hover:translate-y-[-3px]">
+            <img src="https://www.bing.com/th/id/OIP.zQjlYbWu1YJ4rqQmZrXbEQHaHa?w=201&h=211&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2" alt="Free Fire Profile Picture" class="w-12 h-12 object-cover rounded-lg border-2 border-red-500" onerror="this.onerror=null;this.src='https://placehold.co/48x48/666666/ffffff?text=FF';">
+            <div class="flex-grow flex items-center justify-between">
+                <div class="flex flex-col text-left">
+                    <span class="text-base font-medium text-white my-1">FF UID: 3746455890</span>
+                    <span class="text-base font-medium text-white my-1">NAME: —͞ꜱᴀᴋɪʙᴜʟ !i</span>
+                </div>
+                <span class="flex items-center text-lg font-bold text-green-400">
+                    <span class="status-dot-animated w-3 h-3 bg-green-400 rounded-full inline-block mr-2"></span>Online Now
+                </span>
+            </div>
+        </div>
+
+        <!-- সোশ্যাল মিডিয়া প্রোফাইলগুলির কন্টেইনার -->
+        <div class="social-profile-container flex flex-col items-center gap-4 mt-5 w-full max-w-md mx-auto">
+            
+            <!-- guns.lol প্রোফাইল -->
+            <a href="https://guns.lol/sakibul_skb" class="social-profile flex items-center justify-between gap-4 bg-gray-900 bg-opacity-50 p-3 md:p-4 rounded-lg shadow-md transition-transform duration-300 ease-in-out hover:translate-y-[-3px] w-full border-2 border-transparent rgb-border-animated" target="_blank">
+                <div class="flex items-center gap-4">
+                    <img src="https://yt3.googleusercontent.com/tE5p1yminlei8JoyStAu6EkqeNoeWROi2pnGQoqb0KsqSKpcwVVPhzk67UaBVDy1KQgbZPgeYA=s160-c-k-c0x00ffffff-no-rj" alt="Guns.lol Icon" class="w-8 h-8 fill-white" onerror="this.onerror=null;this.src='https://placehold.co/32x32/ff0000/ffffff?text=GL';">
+                    <img src="https://scontent.fdac24-2.fna.fbcdn.net/v/t39.30808-1/511014433_122175827504354519_4007918081686926533_n.jpg?stp=c0.147.1024.1024a_dst-jpg_s200x200_tt6&_nc_cat=105&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeGQsMF0iA04RE_Yo3wI5Hq90CkWnJbtpGLQKRaclu2kYtN9r92KJ7RlsiJokgCn8Rgi_rA3KhrepZGhyh7SS3I1&_nc_ohc=2g9xQ1VCcYcQ7kNvwEi-mV_&_nc_oc=AdldRDNR37-PYVYTh6Suw393tYhdt66nTgSgmBcmXjkEdYU3GQURVlPHeP_uFdXXvaw&_nc_zt=24&_nc_ht=scontent.fdac24-2.fna&_nc_gid=DqeMcmSuwM09ja8iWzg7EQ&oh=00_AfV1nk3K-bQgdwHAez9yhQijZ5_C4uDM9_HoHI-KD1t1Bw&oe=689A58A1" alt="Guns.lol Profile Picture" class="w-12 h-12 object-cover rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/48x48/666666/ffffff?text=SKB';">
+                </div>
+                <div class="flex flex-col text-right items-end">
+                    <span class="social-username text-xl font-bold text-red-500">SAKIBUL SKB</span>
+                    <span class="text-sm text-gray-400">24/22</span>
+                </div>
+            </a>
+
+            <!-- ডিসকর্ড প্রোফাইল -->
+            <a href="https://discord.gg/ZKwFcc8U" class="social-profile flex items-center justify-between gap-4 bg-gray-900 bg-opacity-50 p-3 md:p-4 rounded-lg shadow-md transition-transform duration-300 ease-in-out hover:translate-y-[-3px] w-full border-2 border-transparent rgb-border-animated" target="_blank">
+                <div class="flex items-center gap-4">
+                    <img src="https://static.vecteezy.com/system/resources/previews/023/741/078/large_2x/discord-logo-icon-social-media-icon-free-png.png" alt="Discord Icon" class="w-8 h-8" onerror="this.onerror=null;this.src='https://placehold.co/32x32/5865F2/ffffff?text=DC';">
+                    <img src="https://i.postimg.cc/nrx32jbZ/Screenshot-7-8-2025-17439-discord-com.jpg" alt="Discord Profile Picture" class="w-12 h-12 object-cover rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/48x48/666666/ffffff?text=DC';">
+                </div>
+                <div class="flex flex-col text-right items-end">
+                    <span class="social-username text-xl font-bold text-blue-500">ꜱᴀᴋɪʙᴜʟ</span>
+                    <span class="text-sm text-gray-400">24/04</span>
+                </div>
+            </a>
+            
+            <!-- টেলিগ্রাম প্রোফাইল -->
+            <a href="https://t.me/HUNT_REAR" class="social-profile flex items-center justify-between gap-4 bg-gray-900 bg-opacity-50 p-3 md:p-4 rounded-lg shadow-md transition-transform duration-300 ease-in-out hover:translate-y-[-3px] w-full border-2 border-transparent rgb-border-animated" target="_blank">
+                <div class="flex items-center gap-4">
+                    <img src="https://cdn-icons-png.flaticon.com/128/3536/3536661.png" alt="Telegram Icon" class="w-8 h-8 fill-white" onerror="this.onerror=null;this.src='https://placehold.co/32x32/32a8f0/ffffff?text=TG';">
+                    <img src="https://i.postimg.cc/SspHbqxV/de0f79e4-e0ef-42c5-b85b-f270732989e2.jpg" alt="Telegram Profile Picture" class="w-12 h-12 object-cover rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/48x48/666666/ffffff?text=SKB';">
+                </div>
+                <div class="flex flex-col text-right items-end">
+                    <span class="social-username text-xl font-bold text-blue-400">ꜱᴀᴋɪʙᴜʟ彡☠</span>
+                    <span class="text-sm text-gray-400">24/05</span>
+                </div>
+            </a>
+            
+            <!-- ফেসবুক প্রোফাইল -->
+            <a href="https://www.facebook.com/sakibulSkb/" class="social-profile flex items-center justify-between gap-4 bg-gray-900 bg-opacity-50 p-3 md:p-4 rounded-lg shadow-md transition-transform duration-300 ease-in-out hover:translate-y-[-3px] w-full border-2 border-transparent rgb-border-animated" target="_blank">
+                <div class="flex items-center gap-4">
+                    <img src="https://cdn-icons-png.flaticon.com/128/5968/5968764.png" alt="Facebook Icon" class="w-8 h-8 fill-white" onerror="this.onerror=null;this.src='https://placehold.co/32x32/1877f2/ffffff?text=FB';">
+                    <img src="https://scontent.fdac24-2.fna.fbcdn.net/v/t39.30808-1/511014433_122175827504354519_4007918081686926533_n.jpg?stp=c0.147.1024.1024a_dst-jpg_s200x200_tt6&_nc_cat=105&ccb=1-7&_nc_sid=e99d92&_nc_eui2=AeGQsMF0iA04RE_Yo3wI5Hq90CkWnJbtpGLQKRaclu2kYtN9r92KJ7RlsiJokgCn8Rgi_rA3KhrepZGhyh7SS3I1&_nc_ohc=2g9xQ1VCcYcQ7kNvwEi-mV_&_nc_oc=AdldRDNR37-PYVYTh6Suw393tYhdt66nTgSgmBcmXjkEdYU3GQURVlPHeP_uFdXXvaw&_nc_zt=24&_nc_ht=scontent.fdac24-2.fna&_nc_gid=DqeMcmSuwM09ja8iWzg7EQ&oh=00_AfV1nk3K-bQgdwHAez9yhQijZ5_C4uDM9_HoHI-KD1t1Bw&oe=689A58A1" alt="Facebook Profile Picture" class="w-12 h-12 object-cover rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/48x48/666666/ffffff?text=SKB';">
+                </div>
+                <div class="flex flex-col text-right items-end">
+                    <span class="social-username text-xl font-bold text-blue-800">SAKIBUL SKB</span>
+                    <span class="text-sm text-gray-400">24/12</span>
+                </div>
+            </a>
+
+            <!-- হোয়াটসঅ্যাপ প্রোফাইল -->
+            <a href="https://wa.me/" class="social-profile flex items-center justify-between gap-4 bg-gray-900 bg-opacity-50 p-3 md:p-4 rounded-lg shadow-md transition-transform duration-300 ease-in-out hover:translate-y-[-3px] w-full border-2 border-transparent rgb-border-animated" target="_blank">
+                <div class="flex items-center gap-4">
+                    <img src="https://cdn-icons-png.flaticon.com/128/5968/5968841.png" alt="WhatsApp Icon" class="w-8 h-8 fill-white" onerror="this.onerror=null;this.src='https://placehold.co/32x32/25d366/ffffff?text=WA';">
+                    <img src="https://i.postimg.cc/nVqBLxcB/b0c4efa8-6180-4c6e-9120-d732ade28156.jpg" alt="WhatsApp Profile Picture" class="w-12 h-12 object-cover rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/48x48/666666/ffffff?text=SKB';">
+                </div>
+                <div class="flex flex-col text-right items-end">
+                    <span class="social-username text-xl font-bold text-green-500">UPCOMING BAN</span>
+                    <span class="text-sm text-gray-400">24/00</span>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- JavaScript দিয়ে স্প্ল্যাশ স্ক্রিন এবং মিউজিক নিয়ন্ত্রণ -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const splashScreen = document.getElementById('splash-screen');
+            const mainContent = document.getElementById('main-content');
+            const okButton = document.getElementById('ok-btn');
+            
+            // অডিও ফাইল লোড করা
+            const audio = new Audio('https://media.memesoundeffects.com/2023/04/interworld-rapture.mp3');
+
+            // "OK" বাটনে ক্লিক করলে
+            okButton.addEventListener('click', () => {
+                // স্প্ল্যাশ স্ক্রিন লুকিয়ে ফেলা
+                splashScreen.style.display = 'none';
+
+                // মূল কন্টেন্ট দেখানো
+                mainContent.classList.remove('hidden');
+
+                // মিউজিক চালু করা এবং প্লেব্যাক নিশ্চিত করা
+                const playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        console.log("Music started playing automatically.");
+                    }).catch(error => {
+                        // ব্রাউজারে autoplay ব্লক করা থাকলে এখানে error দেখাবে
+                        console.error("Audio playback was prevented:", error);
+                        // এর পরিবর্তে ইউজারকে ম্যানুয়ালি প্লে করার জন্য একটি বাটন দেখানো যেতে পারে
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
