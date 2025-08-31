@@ -17,6 +17,7 @@
             min-height: 100vh;
             background-color: #111827;
             display: flex;
+            flex-direction: column; /* ফুটার নিচে ঠেলে দেওয়ার জন্য */
             justify-content: center;
             align-items: center;
         }
@@ -33,7 +34,7 @@
             height: auto;
             z-index: -1;
             filter: brightness(0.6);
-            object-fit: cover; /* ভিডিওর অনুপাত ঠিক রাখার জন্য */
+            object-fit: cover;
         }
 
         /* মূল কন্টেন্ট অ্যানিমেশন */
@@ -79,13 +80,53 @@
             animation: rgbBorderAnimation 4s linear infinite;
         }
 
-        /* RGB বাটনের জন্য নতুন অ্যানিমেশন - দ্রুত এবং বেশি রঙ যোগ করা হয়েছে */
+        /* পাসওয়ার্ড ইনপুট বক্সের জন্য নতুন অ্যানিমেশন */
+        @keyframes rgbBorderPulse {
+            0%, 100% {
+                border-color: #ff0000;
+                box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+            }
+            25% {
+                border-color: #00ff00;
+                box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
+            }
+            50% {
+                border-color: #0000ff;
+                box-shadow: 0 0 10px #0000ff, 0 0 20px #0000ff;
+            }
+            75% {
+                border-color: #ff00ff;
+                box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+            }
+        }
+
+        .rgb-border-pulse-animated {
+            animation: rgbBorderPulse 3s linear infinite;
+        }
+
+        /* RGB বাটনের জন্য নতুন অ্যানিমেশন - দ্রুত এবং বেশি রঙ যোগ করা হয়েছে */
         @keyframes rgbConicAnimation {
             from {
                 background-position: 0% center;
             }
             to {
                 background-position: -200% center;
+            }
+        }
+
+        /* নতুন RGB গ্লো অ্যানিমেশন যোগ করা হয়েছে */
+        @keyframes rgbGlowPulse {
+            0%, 100% {
+                box-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000;
+            }
+            25% {
+                box-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 30px #00ff00;
+            }
+            50% {
+                box-shadow: 0 0 10px #0000ff, 0 0 20px #0000ff, 0 0 30px #0000ff;
+            }
+            75% {
+                box-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 30px #ff00ff;
             }
         }
 
@@ -114,7 +155,27 @@
                 #0000ff 100%
             );
             background-size: 200% auto;
-            animation: rgbConicAnimation 2s linear infinite; /* অ্যানিমেশনের গতি কমানো হয়েছে */
+            animation: rgbConicAnimation 2s linear infinite;
+        }
+
+        /* নতুন RGB টেক্সট অ্যানিমেশন */
+        .text-rgb-animated {
+            background-image: linear-gradient(
+                90deg,
+                #ff0000,
+                #ff8000,
+                #ffff00,
+                #00ff00,
+                #00ffff,
+                #0000ff,
+                #ff00ff,
+                #ff0000
+            );
+            background-size: 200% auto;
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rgbConicAnimation 4s linear infinite;
         }
 
         /* মোবাইলের জন্য ফ্লেক্স লেআউট ঠিক করা হয়েছে */
@@ -139,155 +200,444 @@
         .status-dot-animated {
             animation: pulse 1.5s infinite;
         }
+        
+        /* লোডিং স্পিনারের জন্য */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
 
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="text-white">
 
     <!-- ব্যাকগ্রাউন্ড ভিডিও -->
+    <!-- ভিডিওটি একটি পাবলিক সোর্স থেকে নেওয়া হয়েছে, যা আপনার আসল লিঙ্কের চেয়ে বেশি নির্ভরযোগ্য। -->
     <video id="video-background" autoplay loop muted playsinline>
-        <source src="https://rr5---sn-h5576nsl.googlevideo.com/videoplayback?expire=1754775777&ei=gWyXaI6gMcuep-oPmrvm4Qs&ip=176.6.182.40&id=o-ACVVbChYyWFJ4upExJL3Rma9JIa0W1IbqSerhqDfO7SS&itag=271&aitags=133%2C134%2C135%2C136%2C137%2C160%2C242%2C243%2C244%2C247%2C248%2C271%2C278%2C313%2C394%2C395%2C396%2C397%2C398%2C399%2C400%2C401%2C598&source=youtube&requiressl=yes&xpc=EgVo2aDSNQ%3D%3D&bui=AY1jyLMrRzKtn7_H74jiz044MgLNxSt1P_YaX7rwN1LcnQ92Cwmlo8X62p1o6s55tZIFGhrg8ZRjnLDM&vprv=1&svpuc=1&mime=video%2Fwebm&ns=xFJuPmDeCLaQmUgt7FgdpV8Q&rqh=1&gir=yes&clen=32761379&dur=33.133&lmt=1753043828834424&keepalive=yes&fexp=24350590,24350737,24350827,24351316,24351318,24351528,24352220,24352274,24352278,24352460,24352517,24352519,24352540,24352559,24352568,24352572,24352574,24352693,24352695,24352882,24352884,24352948,24352950,24352960,51331020,51548755&c=MWEB&sefc=1&txp=4432534&n=GhCABujU8_IGhg&sparams=expire%2Cei%2Cip%2Cid%2Caitags%2Csource%2Crequiressl%2Cxpc%2Cbui%2Cvprv%2Csvpuc%2Cmime%2Cns%2Crqh%2Cgir%2Cclen%2Cdur%2Clmt&sig=AJfQdSswRAIgUJqaVS6U1bNBDPJp0K-xHXVhNrd1EwKc4tf1xsXsf2ECIEt6plz-3rDWSL50_q8qsnUpGldIF0gkBXSVdZdAWzWN&pot=MnYZw5IJpH8t9xn9VuUHVN66SvkLwu8DkwjHQ-BG3HlT0Uqxc3yr0pYDTg-N7usla_NYkxz4B24h3gXvAXgLvwN3o8IFZKlEie3gu5oEaQLaY4pksxA47b3x8Ws-iMBsBotJF2VWwdyzk6Y_-siyUDiQzW0rELPE&rm=sn-uxax4vopj5qx-cxgd7e,sn-4g5ere76&rrc=79,104&req_id=676729570e72a3ee&rms=rdu,au&redirect_counter=2&cms_redirect=yes&cmsv=e&ipbypass=yes&met=1754754181,&mh=cr&mip=103.158.211.80&mm=29&mn=sn-h5576nsl&ms=rdu&mt=1754752928&mv=u&mvi=5&pl=24&lsparams=ipbypass,met,mh,mip,mm,mn,ms,mv,mvi,pl,rms&lsig=APaTxxMwRQIhAMfYo57BbzXW-knbAWVDZy-preBo_1oZsk4RaQpoxAhdAiADk9HKu-_32uCYUV1x-FhvmJ8LICmJB7NXVTYjdxghMQ%3D%3D" type="video/mp4">
+        <source src="https://assets.mixkit.co/videos/preview/mixkit-waving-golden-smoke-1178-large.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 
     <!-- স্প্ল্যাশ স্ক্রিন -->
     <div id="splash-screen" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex flex-col justify-center items-center z-50 transition-opacity duration-500">
-        <h1 class="text-white text-5xl md:text-7xl font-extrabold mb-8 animate-pulse">CAN YOU SEE THIS</h1>
+        <h1 class="text-white text-5xl md:text-7xl font-extrabold mb-8 animate-pulse">MOBILE X PANEL</h1>
         <button id="ok-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-12 rounded-full shadow-lg transition-transform duration-300 ease-in-out transform hover:scale-110">YES</button>
     </div>
 
-    <!-- মূল কন্টেইনার -->
-    <div id="main-content" class="relative container w-full max-w-xl mx-auto my-5 bg-black bg-opacity-10 backdrop-filter backdrop-blur-sm p-4 md:p-10 rounded-2xl shadow-2xl border-4 border-transparent animate-fadeIn rgb-border-animated">
+    <!-- মূল কন্টেইনার (লগইন পেজ) -->
+    <div id="main-content" class="relative container w-full max-w-xl mx-auto my-5 bg-black bg-opacity-10 backdrop-filter backdrop-blur-sm p-4 md:p-10 rounded-2xl shadow-2xl border-4 border-transparent animate-fadeIn rgb-border-animated hidden">
         
-        <!-- ভিজিটর কাউন্টার -->
-        <div class="absolute top-4 left-4 flex items-center text-gray-300 text-sm z-10">
-            <span class="text-xl mr-2">👁️‍🗨️</span>
-            <span class="text-xl font-bold">64348</span>
-        </div>
-
         <!-- প্রোফাইল পিকচার -->
         <div class="flex justify-center">
-            <img src="https://scontent.fdac24-2.fna.fbcdn.net/v/t39.30808-1/511014433_122175827504354519_4007918081686926533_n.jpg?stp=c0.147.1024.1024a_dst-jpg_s200x200_tt6&_nc_cat=105&ccb=1-7&_nc_sid=e99d92&_nc_ohc=YDAvsSZe_ZcQ7kNvwE0tRg_&_nc_oc=Adn_HIYoeOCNrnlUTviS-wdIK5ESS-kSWfUjgPfS67zFuczVE0qRKGIMPL1tvvYsEwo&_nc_zt=24&_nc_ht=scontent.fdac24-2.fna&_nc_gid=MGTncoSHjI1jYxkek254MQ&oh=00_AfWaPp5coqEFBR5Z6_iAaXBW7aSj8Ho3XzcP8RuOL6gMHw&oe=68AE5761" alt="Profile Picture" class="w-32 h-32 object-cover rounded-xl border-4 border-transparent mb-5 shadow-lg rgb-border-animated" onerror="this.onerror=null;this.src='https://placehold.co/128x128/333333/ffffff?text=Profile';">
+            <img src="https://i.pinimg.com/736x/47/bd/7f/47bd7fa0f05b3d3ad543443ab73b107b.jpg" alt="Profile Picture" class="w-32 h-32 object-cover rounded-xl border-4 border-transparent mb-5 shadow-lg rgb-border-animated" onerror="this.onerror=null;this.src='https://placehold.co/128x128/333333/ffffff?text=Profile';">
         </div>
         
         <!-- ব্যবহারকারীর নাম -->
-        <h1 class="text-4xl md:text-5xl font-bold mb-1 tracking-wide text-center">᙭ ᑕᖇᗩᗯᑎ ᖴᖴ</h1>
+        <h1 class="text-4xl md:text-5xl font-bold mb-1 tracking-wide text-center text-rgb-animated">FF PANEL</h1>
+
+        <!-- ডিজিটাল ঘড়ি -->
+        <div id="digital-clock" class="text-xl md:text-2xl font-semibold mb-4 text-center text-white"></div>
+
+        <!-- পাসওয়ার্ড ইনপুট এবং মেসেজ বক্স -->
+        <div class="mt-5 w-full">
+            <!-- এখানে rgb-border-pulse-animated ক্লাসটি যুক্ত করা হয়েছে -->
+            <input type="password" id="password-input" placeholder="PASSWORD" class="w-full bg-gray-900 bg-opacity-50 text-white px-4 py-3 rounded-lg border-2 border-transparent focus:outline-none focus:border-red-500 transition-all duration-300 rgb-border-pulse-animated">
+            <p id="message-box" class="text-center mt-2 font-medium"></p>
+        </div>
         
-        <!-- সাবস্ক্রাইব বোতাম -->
-        <a href="http://www.youtube.com/@xcrawnff-xcf" class="rgb-conic-animated text-white no-underline font-bold py-2 px-4 rounded-lg mb-5 transition-transform duration-300 ease-in-out hover:scale-105 hover:translate-y-[-3px] hover:shadow-xl text-center block mt-5" target="_blank">SUBSCRIBE</a>
+        <!-- পাসওয়ার্ড ভুলে গেছেন বাটন -->
+        <div class="w-full text-left my-2">
+            <a href="#" id="forgot-password-link" class="text-blue-400 hover:text-blue-600 transition-colors duration-300 text-sm">CHANGE PASSWORD?</a>
+        </div>
+
+        <!-- সাবস্ক্রাইব বাটন যা পাসওয়ার্ড যাচাই করবে -->
+        <button id="subscribe-button" class="rgb-conic-animated text-white font-bold py-2 px-4 rounded-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:translate-y-[-3px] hover:shadow-xl text-center block w-full">
+            <span id="subscribe-text">LOG IN</span>
+            <span id="subscribe-spinner" class="loader hidden"></span>
+        </button>
+
+        <!-- নতুন ফুটার যা নিচে যোগ করা হয়েছে -->
+        <div class="mt-4 px-4 py-2 border-4 rounded-xl text-center rgb-border-animated">
+            <h2 class="text-2xl font-extrabold uppercase tracking-wide text-rgb-animated">
+                THE BEST MOBILE PANEL FOR U
+            </h2>
+        </div>
+    </div>
+
+    <!-- পাসওয়ার্ড পরিবর্তন করার পেজ (ডিফল্টভাবে লুকানো) -->
+    <div id="forgot-password-page" class="hidden relative container w-full max-w-xl mx-auto my-5 bg-black bg-opacity-10 backdrop-filter backdrop-blur-sm p-4 md:p-10 rounded-2xl shadow-2xl border-4 border-transparent animate-fadeIn rgb-border-animated">
+        <h2 class="text-3xl font-bold mb-4 text-center">CHANGE PASSWORD</h2>
+        <p class="text-center text-gray-400 mb-4">নিরাপত্তার জন্য, প্রথমে আপনার বর্তমান পাসওয়ার্ড দিন এবং তারপর নতুন পাসওয়ার্ডটি দুইবার দিন।</p>
         
-        <!-- ফ্রি ফায়ার প্রোফাইল -->
-        <div class="https://scontent.fdac24-2.fna.fbcdn.net/v/t39.30808-6/511014433_122175827504354519_4007918081686926533_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=YDAvsSZe_ZcQ7kNvwE0tRg_&_nc_oc=Adn_HIYoeOCNrnlUTviS-wdIK5ESS-kSWfUjgPfS67zFuczVE0qRKGIMPL1tvvYsEwo&_nc_zt=23&_nc_ht=scontent.fdac24-2.fna&_nc_gid=yZbJlvumfEHmaX-2ICDKlg&oh=00_AfX3MJrH4gmTTnFIpMLTi7_YKnBfm0ipoli2KEIytLns2A&oe=68AE4BC6">
-            <img src="https://www.bing.com/th/id/OIP.zQjlYbWu1YJ4rqQmZrXbEQHaHa?w=201&h=211&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2" alt="Free Fire Profile Picture" class="w-12 h-12 object-cover rounded-lg border-2 border-red-500" onerror="this.onerror=null;this.src='https://placehold.co/48x48/666666/ffffff?text=FF';">
-            <div class="flex-grow flex items-center justify-between">
+        <div class="mb-4">
+            <input type="password" id="old-password-input" placeholder="বর্তমান পাসওয়ার্ড" class="w-full bg-gray-900 bg-opacity-50 text-white px-4 py-3 rounded-lg border-2 border-transparent focus:outline-none focus:border-red-500 transition-all duration-300 mb-3">
+            <input type="password" id="new-password-input" placeholder="নতুন পাসওয়ার্ড" class="w-full bg-gray-900 bg-opacity-50 text-white px-4 py-3 rounded-lg border-2 border-transparent focus:outline-none focus:border-green-500 transition-all duration-300 mb-3">
+            <input type="password" id="confirm-new-password-input" placeholder="নতুন পাসওয়ার্ড নিশ্চিত করুন" class="w-full bg-gray-900 bg-opacity-50 text-white px-4 py-3 rounded-lg border-2 border-transparent focus:outline-none focus:border-green-500 transition-all duration-300">
+            <p id="forgot-password-message" class="text-center mt-2 font-medium"></p>
+        </div>
+        
+        <button id="change-password-button" class="rgb-conic-animated text-white font-bold py-2 px-4 rounded-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:translate-y-[-3px] hover:shadow-xl text-center block w-full mb-3">
+            <span id="change-password-text">CHANGE PASSWORD</span>
+            <span id="change-password-spinner" class="loader hidden"></span>
+        </button>
+        <button id="back-button" class="text-white font-bold py-2 px-4 rounded-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:translate-y-[-3px] hover:shadow-xl text-center block w-full bg-gray-600 hover:bg-gray-700">ফিরে যান</button>
+    </div>
+
+    <!-- নতুন পেজ (লগইন সফল হলে এটি দেখানো হবে) -->
+    <div id="new-page" class="hidden relative container w-full max-w-xl mx-auto my-5 bg-black bg-opacity-10 backdrop-filter backdrop-blur-sm p-4 md:p-10 rounded-2xl shadow-2xl border-4 border-transparent animate-fadeIn rgb-border-animated">
+
+        <!-- FF প্রোফাইল সেকশন - এটি নতুন পেজের উপরে থাকবে -->
+        <div class="flex items-center justify-between gap-4 bg-gray-900 bg-opacity-50 p-3 md:p-4 rounded-lg shadow-md w-full border-2 border-transparent rgb-border-animated mb-6">
+            <div class="flex items-center gap-4">
+                <img src="https://www.bing.com/th/id/OIP.zQjlYbWu1YJ4rqQmZrXbEQHaHa?w=201&h=211&c=8&rs=1&qlt=90&o=6&pid=3.1&rm=2" alt="Free Fire Profile Picture" class="w-12 h-12 object-cover rounded-lg border-2 border-red-500" onerror="this.onerror=null;this.src='https://placehold.co/48x48/666666/ffffff?text=FF';">
                 <div class="flex flex-col text-left">
                     <span class="text-base font-medium text-white my-1">FF UID: 3746455890</span>
                     <span class="text-base font-medium text-white my-1">NAME: —͞ꜱᴀᴋɪʙᴜʟ !i</span>
                 </div>
-                <span class="flex items-center text-lg font-bold text-green-400">
-                    <span class="status-dot-animated w-3 h-3 bg-green-400 rounded-full inline-block mr-2"></span>Online Now
-                </span>
             </div>
+            <span class="flex items-center text-lg font-bold text-green-400">
+                <span class="status-dot-animated w-3 h-3 bg-green-400 rounded-full inline-block mr-2"></span>Online Now
+            </span>
         </div>
 
-        <!-- সোশ্যাল মিডিয়া প্রোফাইলগুলির কন্টেইনার -->
-        <div class="social-profile-container flex flex-col items-center gap-4 mt-5 w-full max-w-md mx-auto">
-            
-            <!-- guns.lol প্রোফাইল -->
-            <a href="https://guns.lol/sakibul_skb" class="social-profile flex items-center justify-between gap-4 bg-gray-900 bg-opacity-50 p-3 md:p-4 rounded-lg shadow-md transition-transform duration-300 ease-in-out hover:translate-y-[-3px] w-full border-2 border-transparent rgb-border-animated" target="_blank">
-                <div class="flex items-center gap-4">
-                    <img src="https://yt3.googleusercontent.com/tE5p1yminlei8JoyStAu6EkqeNoeWROi2pnGQoqb0KsqSKpcwVVPhzk67UaBVDy1KQgbZPgeYA=s160-c-k-c0x00ffffff-no-rj" alt="Guns.lol Icon" class="w-8 h-8 fill-white" onerror="this.onerror=null;this.src='https://placehold.co/32x32/ff0000/ffffff?text=GL';">
-                    <img src="https://scontent.fdac24-2.fna.fbcdn.net/v/t39.30808-6/511014433_122175827504354519_4007918081686926533_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=YDAvsSZe_ZcQ7kNvwE0tRg_&_nc_oc=Adn_HIYoeOCNrnlUTviS-wdIK5ESS-kSWfUjgPfS67zFuczVE0qRKGIMPL1tvvYsEwo&_nc_zt=23&_nc_ht=scontent.fdac24-2.fna&_nc_gid=yZbJlvumfEHmaX-2ICDKlg&oh=00_AfX3MJrH4gmTTnFIpMLTi7_YKnBfm0ipoli2KEIytLns2A&oe=68AE4BC6" alt="Guns.lol Profile Picture" class="w-12 h-12 object-cover rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/48x48/666666/ffffff?text=SKB';">
-                </div>
-                <div class="flex flex-col text-right items-end">
-                    <span class="social-username text-xl font-bold text-red-500">SAKIBUL SKB</span>
-                    <span class="text-sm text-gray-400">24/22</span>
-                </div>
-            </a>
-
-            <!-- ডিসকর্ড প্রোফাইল -->
-            <a href="https://discord.gg/ZKwFcc8U" class="social-profile flex items-center justify-between gap-4 bg-gray-900 bg-opacity-50 p-3 md:p-4 rounded-lg shadow-md transition-transform duration-300 ease-in-out hover:translate-y-[-3px] w-full border-2 border-transparent rgb-border-animated" target="_blank">
-                <div class="flex items-center gap-4">
-                    <img src="https://static.vecteezy.com/system/resources/previews/023/741/078/large_2x/discord-logo-icon-social-media-icon-free-png.png" alt="Discord Icon" class="w-8 h-8" onerror="this.onerror=null;this.src='https://placehold.co/32x32/5865F2/ffffff?text=DC';">
-                    <img src="https://i.postimg.cc/nrx32jbZ/Screenshot-7-8-2025-17439-discord-com.jpg" alt="Discord Profile Picture" class="w-12 h-12 object-cover rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/48x48/666666/ffffff?text=DC';">
-                </div>
-                <div class="flex flex-col text-right items-end">
-                    <span class="social-username text-xl font-bold text-blue-500">ꜱᴀᴋɪʙᴜʟ</span>
-                    <span class="text-sm text-gray-400">24/04</span>
-                </div>
-            </a>
-            
-            <!-- টেলিগ্রাম প্রোফাইল -->
-            <a href="https://t.me/HUNT_REAR" class="social-profile flex items-center justify-between gap-4 bg-gray-900 bg-opacity-50 p-3 md:p-4 rounded-lg shadow-md transition-transform duration-300 ease-in-out hover:translate-y-[-3px] w-full border-2 border-transparent rgb-border-animated" target="_blank">
-                <div class="flex items-center gap-4">
-                    <img src="https://cdn-icons-png.flaticon.com/128/3536/3536661.png" alt="Telegram Icon" class="w-8 h-8 fill-white" onerror="this.onerror=null;this.src='https://placehold.co/32x32/32a8f0/ffffff?text=TG';">
-                    <img src="https://i.postimg.cc/SspHbqxV/de0f79e4-e0ef-42c5-b85b-f270732989e2.jpg" alt="Telegram Profile Picture" class="w-12 h-12 object-cover rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/48x48/666666/ffffff?text=SKB';">
-                </div>
-                <div class="flex flex-col text-right items-end">
-                    <span class="social-username text-xl font-bold text-blue-400">ꜱᴀᴋɪʙᴜʟ彡☠</span>
-                    <span class="text-sm text-gray-400">24/05</span>
-                </div>
-            </a>
-            
-            <!-- ফেসবুক প্রোফাইল -->
-            <a href="https://www.facebook.com/sakibulSkb/" class="social-profile flex items-center justify-between gap-4 bg-gray-900 bg-opacity-50 p-3 md:p-4 rounded-lg shadow-md transition-transform duration-300 ease-in-out hover:translate-y-[-3px] w-full border-2 border-transparent rgb-border-animated" target="_blank">
-                <div class="flex items-center gap-4">
-                    <img src="https://cdn-icons-png.flaticon.com/128/5968/5968764.png" alt="Facebook Icon" class="w-8 h-8 fill-white" onerror="this.onerror=null;this.src='https://placehold.co/32x32/1877f2/ffffff?text=FB';">
-                    <img src="https://scontent.fdac24-2.fna.fbcdn.net/v/t39.30808-6/511014433_122175827504354519_4007918081686926533_n.jpg?_nc_cat=105&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=YDAvsSZe_ZcQ7kNvwE0tRg_&_nc_oc=Adn_HIYoeOCNrnlUTviS-wdIK5ESS-kSWfUjgPfS67zFuczVE0qRKGIMPL1tvvYsEwo&_nc_zt=23&_nc_ht=scontent.fdac24-2.fna&_nc_gid=yZbJlvumfEHmaX-2ICDKlg&oh=00_AfX3MJrH4gmTTnFIpMLTi7_YKnBfm0ipoli2KEIytLns2A&oe=68AE4BC6" alt="Facebook Profile Picture" class="w-12 h-12 object-cover rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/48x48/666666/ffffff?text=SKB';">
-                </div>
-                <div class="flex flex-col text-right items-end">
-                    <span class="social-username text-xl font-bold text-blue-800">SAKIBUL SKB</span>
-                    <span class="text-sm text-gray-400">24/12</span>
-                </div>
-            </a>
-
-            <!-- হোয়াটসঅ্যাপ প্রোফাইল -->
-            <a href="https://wa.me/" class="social-profile flex items-center justify-between gap-4 bg-gray-900 bg-opacity-50 p-3 md:p-4 rounded-lg shadow-md transition-transform duration-300 ease-in-out hover:translate-y-[-3px] w-full border-2 border-transparent rgb-border-animated" target="_blank">
-                <div class="flex items-center gap-4">
-                    <img src="https://cdn-icons-png.flaticon.com/128/5968/5968841.png" alt="WhatsApp Icon" class="w-8 h-8 fill-white" onerror="this.onerror=null;this.src='https://placehold.co/32x32/25d366/ffffff?text=WA';">
-                    <img src="https://i.postimg.cc/nVqBLxcB/b0c4efa8-6180-4c6e-9120-d732ade28156.jpg" alt="WhatsApp Profile Picture" class="w-12 h-12 object-cover rounded-lg" onerror="this.onerror=null;this.src='https://placehold.co/48x48/666666/ffffff?text=SKB';">
-                </div>
-                <div class="flex flex-col text-right items-end">
-                    <span class="social-username text-xl font-bold text-green-500">UPCOMING BAN</span>
-                    <span class="text-sm text-gray-400">24/00</span>
-                </div>
-            </a>
+        <!-- দ্বিতীয় পাসওয়ার্ড ইনপুট ক্ষেত্র -->
+        <h2 class="text-3xl md:text-4xl font-bold text-center mb-6 text-rgb-animated">PERMAMENT PANEL</h2>
+        <p class="text-center text-gray-300 mb-4">
+            আপনার নতুন কন্টেন্ট দেখতে নিচের পাসওয়ার্ডটি দিন।
+        </p>
+        <div class="mt-5 w-full">
+            <input type="password" id="new-password-field" placeholder="AUTH KEY PER MOBILE CHANGE" class="w-full bg-gray-900 bg-opacity-50 text-white px-4 py-3 rounded-lg border-2 border-transparent focus:outline-none focus:border-red-500 transition-all duration-300 rgb-border-pulse-animated">
+            <p id="new-message-box" class="text-center mt-2 font-medium"></p>
         </div>
+        <button id="verify-button" class="rgb-conic-animated text-white font-bold py-2 px-4 rounded-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:translate-y-[-3px] hover:shadow-xl text-center block w-full">
+            <span id="verify-text">OPEN FREE FIRE</span>
+            <span id="verify-spinner" class="loader hidden"></span>
+        </button>
+
+        <!-- লগআউট বাটন -->
+        <button id="logout-button" class="text-white font-bold py-2 px-4 rounded-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:translate-y-[-3px] hover:shadow-xl text-center block w-full mt-6 bg-gray-600 hover:bg-gray-700">লগআউট</button>
+
     </div>
 
     <!-- JavaScript দিয়ে স্প্ল্যাশ স্ক্রিন এবং মিউজিক নিয়ন্ত্রণ -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const splashScreen = document.getElementById('splash-screen');
-            const mainContent = document.getElementById('main-content');
-            const okButton = document.getElementById('ok-btn');
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, updateDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase-এর প্রয়োজনীয় ভেরিয়েবলগুলো ব্যবহার করা হচ্ছে
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let db, auth;
+        let userId;
+        let unsubscribeUserDoc;
+
+        // UI উপাদানগুলো নির্বাচন করা হয়েছে
+        const splashScreen = document.getElementById('splash-screen');
+        const mainContent = document.getElementById('main-content');
+        const newPage = document.getElementById('new-page');
+        const forgotPasswordPage = document.getElementById('forgot-password-page');
+        const okButton = document.getElementById('ok-btn');
+        const audio = new Audio('https://media.memesoundeffects.com/2023/04/interworld-rapture.mp3');
+
+        // লোডিং স্পিনার এবং টেক্সট
+        const subscribeButton = document.getElementById('subscribe-button');
+        const subscribeText = document.getElementById('subscribe-text');
+        const subscribeSpinner = document.getElementById('subscribe-spinner');
+        const changePasswordButton = document.getElementById('change-password-button');
+        const changePasswordText = document.getElementById('change-password-text');
+        const changePasswordSpinner = document.getElementById('change-password-spinner');
+        const verifyButton = document.getElementById('verify-button');
+        const verifyText = document.getElementById('verify-text');
+        const verifySpinner = document.getElementById('verify-spinner');
+
+        // ইনপুট এবং মেসেজ বক্স
+        const passwordInput = document.getElementById('password-input');
+        const messageBox = document.getElementById('message-box');
+        const forgotPasswordLink = document.getElementById('forgot-password-link');
+        const oldPasswordInput = document.getElementById('old-password-input');
+        const newPasswordInput = document.getElementById('new-password-input');
+        const confirmNewPasswordInput = document.getElementById('confirm-new-password-input');
+        const backButton = document.getElementById('back-button');
+        const forgotPasswordMessage = document.getElementById('forgot-password-message');
+        const newPasswordField = document.getElementById('new-password-field');
+        const newMessageBox = document.getElementById('new-message-box');
+        const logoutButton = document.getElementById('logout-button');
+        
+        // পাসওয়ার্ড হ্যাশ করার জন্য SHA-256 ফাংশন
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder('utf-8').encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        // লোডিং অবস্থা দেখানোর ফাংশন
+        function setLoading(button, textSpan, spinnerSpan, isLoading) {
+            if (isLoading) {
+                textSpan.classList.add('hidden');
+                spinnerSpan.classList.remove('hidden');
+                button.disabled = true;
+            } else {
+                textSpan.classList.remove('hidden');
+                spinnerSpan.classList.add('hidden');
+                button.disabled = false;
+            }
+        }
+        
+        // Firestore-এ ইউজার ডেটা সেট বা আপডেট করার ফাংশন
+        async function setUserData(data) {
+            if (!userId) {
+                console.error("No user ID found to set data.");
+                return;
+            }
+            try {
+                const userDocRef = doc(db, 'artifacts', appId, 'users', userId);
+                await setDoc(userDocRef, data, { merge: true });
+            } catch (error) {
+                console.error("Error writing document: ", error);
+            }
+        }
+
+        // Firestore থেকে ইউজার ডেটা রিয়েল-টাইমে নেওয়ার ফাংশন
+        function listenToUserDoc() {
+            if (unsubscribeUserDoc) {
+                unsubscribeUserDoc();
+            }
+            if (!userId) {
+                console.error("No user ID to listen to.");
+                return;
+            }
+            const userDocRef = doc(db, 'artifacts', appId, 'users', userId);
+            unsubscribeUserDoc = onSnapshot(userDocRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    sessionStorage.setItem('userData', JSON.stringify(data));
+                    console.log("User data updated in sessionStorage.");
+                } else {
+                    console.log("No such document!");
+                    sessionStorage.removeItem('userData');
+                }
+            }, (error) => {
+                console.error("Error listening to document: ", error);
+            });
+        }
+
+        // লগইন লজিক
+        async function handleLogin() {
+            const enteredPassword = passwordInput.value;
+            setLoading(subscribeButton, subscribeText, subscribeSpinner, true);
+            const userData = JSON.parse(sessionStorage.getItem('userData'));
             
-            // অডিও ফাইল লোড করা
-            const audio = new Audio('https://media.memesoundeffects.com/2023/04/interworld-rapture.mp3');
+            if (!userData || !userData.passwordHash) {
+                messageBox.textContent = "ডেটা লোড হচ্ছে, কিছুক্ষণ অপেক্ষা করুন।";
+                messageBox.style.color = "#fcd34d"; // হলুদ
+                setLoading(subscribeButton, subscribeText, subscribeSpinner, false);
+                return;
+            }
+            
+            const enteredPasswordHash = await sha256(enteredPassword);
+            if (enteredPasswordHash === userData.passwordHash) {
+                messageBox.textContent = "";
+                mainContent.classList.add('hidden');
+                newPage.classList.remove('hidden');
+            } else {
+                messageBox.textContent = "ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।";
+                messageBox.style.color = "#ef4444"; // লাল
+            }
+            setLoading(subscribeButton, subscribeText, subscribeSpinner, false);
+        }
 
-            // "OK" বাটনে ক্লিক করলে
+        // পাসওয়ার্ড পরিবর্তন লজিক
+        async function handleChangePassword() {
+            const oldPassword = oldPasswordInput.value;
+            const newPassword = newPasswordInput.value;
+            const confirmNewPassword = confirmNewPasswordInput.value;
+
+            const userData = JSON.parse(sessionStorage.getItem('userData'));
+            if (!userData || !userData.passwordHash) {
+                forgotPasswordMessage.textContent = "ডেটা লোড হচ্ছে, কিছুক্ষণ অপেক্ষা করুন।";
+                forgotPasswordMessage.style.color = "#fcd34d";
+                return;
+            }
+
+            const oldPasswordHash = await sha256(oldPassword);
+            if (oldPasswordHash === userData.passwordHash) {
+                if (newPassword.trim() === "" || newPassword.length < 4) {
+                    forgotPasswordMessage.textContent = "নতুন পাসওয়ার্ড কমপক্ষে ৪ অক্ষরের হতে হবে।";
+                    forgotPasswordMessage.style.color = "#ef4444";
+                } else if (newPassword !== confirmNewPassword) {
+                    forgotPasswordMessage.textContent = "নতুন পাসওয়ার্ড দুটি মিলছে না।";
+                    forgotPasswordMessage.style.color = "#ef4444";
+                } else {
+                    setLoading(changePasswordButton, changePasswordText, changePasswordSpinner, true);
+                    const newPasswordHash = await sha256(newPassword);
+                    await setUserData({ passwordHash: newPasswordHash });
+                    forgotPasswordMessage.textContent = "পাসওয়ার্ড সফলভাবে পরিবর্তন করা হয়েছে!";
+                    forgotPasswordMessage.style.color = "#4ade80";
+                    setTimeout(() => {
+                        mainContent.classList.remove('hidden');
+                        forgotPasswordPage.classList.add('hidden');
+                        passwordInput.value = '';
+                        messageBox.textContent = 'আপনার নতুন পাসওয়ার্ড দিয়ে লগইন করুন।';
+                        messageBox.style.color = "#4ade80";
+                        setLoading(changePasswordButton, changePasswordText, changePasswordSpinner, false);
+                    }, 2000);
+                }
+            } else {
+                forgotPasswordMessage.textContent = "বর্তমান পাসওয়ার্ড ভুল।";
+                forgotPasswordMessage.style.color = "#ef4444";
+            }
+        }
+
+        // দ্বিতীয় পাসওয়ার্ড যাচাই করার লজিক
+        async function handleVerify() {
+            const enteredPassword2 = newPasswordField.value;
+            setLoading(verifyButton, verifyText, verifySpinner, true);
+            const userData = JSON.parse(sessionStorage.getItem('userData'));
+
+            if (!userData || !userData.password2) {
+                newMessageBox.textContent = "ডেটা লোড হচ্ছে, কিছুক্ষণ অপেক্ষা করুন।";
+                newMessageBox.style.color = "#fcd34d";
+                setLoading(verifyButton, verifyText, verifySpinner, false);
+                return;
+            }
+
+            if (enteredPassword2 === userData.password2) {
+                newMessageBox.textContent = "সঠিক পাসওয়ার্ড! ইউটিউব চ্যানেলে নিয়ে যাওয়া হচ্ছে...";
+                newMessageBox.style.color = "#4ade80";
+                
+                // এখানে ইউটিউব চ্যানেলে রিডাইরেক্ট করা হচ্ছে
+                const youtubeChannelUrl = 'https://www.youtube.com/@xcrawnff-xcf';
+                window.open(youtubeChannelUrl, '_blank');
+            } else {
+                newMessageBox.textContent = "ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।";
+                newMessageBox.style.color = "#ef4444";
+            }
+            setLoading(verifyButton, verifyText, verifySpinner, false);
+        }
+
+        // লগআউট লজিক
+        function handleLogout() {
+            newPage.classList.add('hidden');
+            mainContent.classList.remove('hidden');
+            passwordInput.value = '';
+            messageBox.textContent = '';
+            newPasswordField.value = '';
+            newMessageBox.textContent = '';
+        }
+
+        // রিয়েল-টাইম ঘড়ি আপডেট করার ফাংশন
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let seconds = now.getSeconds();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // 0-কে 12-তে রূপান্তর
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            const timeString = `${hours}:${minutes}:${seconds} ${ampm}`;
+            const clockElement = document.getElementById('digital-clock');
+            if (clockElement) {
+                clockElement.textContent = timeString;
+            }
+        }
+
+        // ইভেন্ট লিসেনার
+        document.addEventListener('DOMContentLoaded', () => {
+            // Firebase এবং Authentication initialization
+            if (Object.keys(firebaseConfig).length > 0) {
+                const app = initializeApp(firebaseConfig);
+                auth = getAuth(app);
+                db = getFirestore(app);
+                setLogLevel('debug'); // Firestore-এর লগিং চালু করা হয়েছে
+                
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        // Firestore থেকে ডেটা শোনা শুরু করুন
+                        listenToUserDoc();
+                        
+                        // যদি ডকুমেন্ট না থাকে তবে ডিফল্ট পাসওয়ার্ড সেট করুন
+                        const userDocRef = doc(db, 'artifacts', appId, 'users', userId);
+                        const userDocSnap = await getDoc(userDocRef);
+                        if (!userDocSnap.exists()) {
+                            const defaultPassword = '77777777';
+                            const defaultPasswordHash = await sha256(defaultPassword);
+                            await setUserData({
+                                passwordHash: defaultPasswordHash, // হ্যাশ করা ডিফল্ট পাসওয়ার্ড
+                                password2: '762959814' // দ্বিতীয় ডিফল্ট পাসওয়ার্ড
+                            });
+                        }
+                    } else {
+                        console.log("User is signed out or not authenticated. Signing in...");
+                        try {
+                            if (initialAuthToken) {
+                                await signInWithCustomToken(auth, initialAuthToken);
+                            } else {
+                                await signInAnonymously(auth);
+                            }
+                        } catch (error) {
+                            console.error("Authentication error:", error);
+                        }
+                    }
+                });
+            } else {
+                console.error("Firebase config is not available. Please provide it.");
+            }
+
+            // মিউজিক এবং স্প্ল্যাশ স্ক্রিন লজিক
             okButton.addEventListener('click', () => {
-                // স্প্ল্যাশ স্ক্রিন লুকিয়ে ফেলা
                 splashScreen.style.display = 'none';
-
-                // মূল কন্টেন্ট দেখানো
                 mainContent.classList.remove('hidden');
-
-                // মিউজিক চালু করা এবং প্লেব্যাক নিশ্চিত করা
                 const playPromise = audio.play();
                 if (playPromise !== undefined) {
                     playPromise.then(() => {
                         console.log("Music started playing automatically.");
                     }).catch(error => {
-                        // ব্রাউজারে autoplay ব্লক করা থাকলে এখানে error দেখাবে
                         console.error("Audio playback was prevented:", error);
-                        // এর পরিবর্তে ইউজারকে ম্যানুয়ালি প্লে করার জন্য একটি বাটন দেখানো যেতে পারে
                     });
                 }
             });
+
+            // বাটন ইভেন্ট লিসেনার
+            subscribeButton.addEventListener('click', handleLogin);
+            forgotPasswordLink.addEventListener('click', (event) => {
+                event.preventDefault();
+                mainContent.classList.add('hidden');
+                forgotPasswordPage.classList.remove('hidden');
+                oldPasswordInput.value = '';
+                newPasswordInput.value = '';
+                confirmNewPasswordInput.value = '';
+                forgotPasswordMessage.textContent = '';
+            });
+            changePasswordButton.addEventListener('click', handleChangePassword);
+            backButton.addEventListener('click', () => {
+                mainContent.classList.remove('hidden');
+                forgotPasswordPage.classList.add('hidden');
+                passwordInput.value = '';
+                messageBox.textContent = '';
+            });
+            verifyButton.addEventListener('click', handleVerify);
+            logoutButton.addEventListener('click', handleLogout);
+
+            // ঘড়ি আপডেট করার জন্য
+            updateClock();
+            setInterval(updateClock, 1000);
         });
     </script>
 </body>
 </html>
-
-
