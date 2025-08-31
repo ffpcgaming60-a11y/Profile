@@ -17,7 +17,7 @@
             min-height: 100vh;
             background-color: #111827;
             display: flex;
-            flex-direction: column; /* ফুটার নিচে ঠেলে দেওয়ার জন্য */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
         }
@@ -220,7 +220,6 @@
 <body class="text-white">
 
     <!-- ব্যাকগ্রাউন্ড ভিডিও -->
-    <!-- ভিডিওটি একটি পাবলিক সোর্স থেকে নেওয়া হয়েছে, যা আপনার আসল লিঙ্কের চেয়ে বেশি নির্ভরযোগ্য। -->
     <video id="video-background" autoplay loop muted playsinline>
         <source src="https://assets.mixkit.co/videos/preview/mixkit-waving-golden-smoke-1178-large.mp4" type="video/mp4">
         Your browser does not support the video tag.
@@ -248,7 +247,6 @@
 
         <!-- পাসওয়ার্ড ইনপুট এবং মেসেজ বক্স -->
         <div class="mt-5 w-full">
-            <!-- এখানে rgb-border-pulse-animated ক্লাসটি যুক্ত করা হয়েছে -->
             <input type="password" id="password-input" placeholder="PASSWORD" class="w-full bg-gray-900 bg-opacity-50 text-white px-4 py-3 rounded-lg border-2 border-transparent focus:outline-none focus:border-red-500 transition-all duration-300 rgb-border-pulse-animated">
             <p id="message-box" class="text-center mt-2 font-medium"></p>
         </div>
@@ -333,14 +331,66 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, onSnapshot, updateDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase-এর প্রয়োজনীয় ভেরিয়েবলগুলো ব্যবহার করা হচ্ছে
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        // Firebase Console থেকে আপনার নিজের Firebase Config এখানে পেস্ট করুন।
+        // এটি GitHub Pages-এ অ্যাপটি চালানোর জন্য প্রয়োজন।
+        // --- এখানে শুরু ---
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        // --- এখানে শেষ ---
 
+        // Canvas পরিবেশের জন্য বিশেষ ভেরিয়েবল
+        const canvasFirebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        const canvasAppId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        // Firebase-এর প্রয়োজনীয় ভেরিয়েবলগুলো সংজ্ঞায়িত করা হয়েছে
         let db, auth;
         let userId;
         let unsubscribeUserDoc;
+        let appId;
+        
+        const isCanvasEnvironment = canvasFirebaseConfig !== null;
+
+        // Firebase Initialization Logic
+        async function initializeFirebase() {
+            try {
+                if (isCanvasEnvironment) {
+                    // Canvas Environment-এর জন্য Firebase initialization
+                    console.log("Using Canvas authentication.");
+                    const app = initializeApp(canvasFirebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
+                    appId = canvasAppId;
+                    if (initialAuthToken) {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                } else if (Object.keys(firebaseConfig).length > 0 && firebaseConfig.apiKey !== "YOUR_API_KEY") {
+                    // GitHub Pages বা অন্য কোনো হোস্টিং-এর জন্য
+                    console.log("Using user-provided Firebase configuration.");
+                    const app = initializeApp(firebaseConfig);
+                    auth = getAuth(app);
+                    db = getFirestore(app);
+                    appId = firebaseConfig.appId;
+                    await signInAnonymously(auth);
+                } else {
+                    console.error("Firebase config is not available. Please provide it to run the app.");
+                    // Firebase না থাকলে UI-তে একটি মেসেজ দেখান
+                    document.getElementById('message-box').textContent = "Firebase কনফিগারেশন পাওয়া যায়নি। অনুগ্রহ করে কোডে আপনার নিজস্ব কনফিগারেশন যোগ করুন।";
+                    document.getElementById('message-box').style.color = "#ef4444";
+                    return; // ফাংশন বন্ধ করুন
+                }
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+            }
+        }
 
         // UI উপাদানগুলো নির্বাচন করা হয়েছে
         const splashScreen = document.getElementById('splash-screen');
@@ -398,8 +448,8 @@
         
         // Firestore-এ ইউজার ডেটা সেট বা আপডেট করার ফাংশন
         async function setUserData(data) {
-            if (!userId) {
-                console.error("No user ID found to set data.");
+            if (!userId || !appId || !db) {
+                console.error("No user ID, app ID or DB found to set data.");
                 return;
             }
             try {
@@ -415,8 +465,8 @@
             if (unsubscribeUserDoc) {
                 unsubscribeUserDoc();
             }
-            if (!userId) {
-                console.error("No user ID to listen to.");
+            if (!userId || !db || !appId) {
+                console.error("No user ID, DB or app ID to listen to.");
                 return;
             }
             const userDocRef = doc(db, 'artifacts', appId, 'users', userId);
@@ -546,7 +596,7 @@
             let seconds = now.getSeconds();
             const ampm = hours >= 12 ? 'PM' : 'AM';
             hours = hours % 12;
-            hours = hours ? hours : 12; // 0-কে 12-তে রূপান্তর
+            hours = hours ? hours : 12;
             minutes = minutes < 10 ? '0' + minutes : minutes;
             seconds = seconds < 10 ? '0' + seconds : seconds;
             const timeString = `${hours}:${minutes}:${seconds} ${ampm}`;
@@ -558,47 +608,40 @@
 
         // ইভেন্ট লিসেনার
         document.addEventListener('DOMContentLoaded', () => {
-            // Firebase এবং Authentication initialization
-            if (Object.keys(firebaseConfig).length > 0) {
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-                setLogLevel('debug'); // Firestore-এর লগিং চালু করা হয়েছে
-                
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        // Firestore থেকে ডেটা শোনা শুরু করুন
-                        listenToUserDoc();
-                        
-                        // যদি ডকুমেন্ট না থাকে তবে ডিফল্ট পাসওয়ার্ড সেট করুন
+            initializeFirebase();
+            
+            // Firebase Auth State Listener
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    listenToUserDoc();
+                    
+                    if (db && appId) {
                         const userDocRef = doc(db, 'artifacts', appId, 'users', userId);
                         const userDocSnap = await getDoc(userDocRef);
                         if (!userDocSnap.exists()) {
                             const defaultPassword = '77777777';
                             const defaultPasswordHash = await sha256(defaultPassword);
                             await setUserData({
-                                passwordHash: defaultPasswordHash, // হ্যাশ করা ডিফল্ট পাসওয়ার্ড
-                                password2: '762959814' // দ্বিতীয় ডিফল্ট পাসওয়ার্ড
+                                passwordHash: defaultPasswordHash,
+                                password2: '762959814'
                             });
                         }
                     } else {
-                        console.log("User is signed out or not authenticated. Signing in...");
-                        try {
-                            if (initialAuthToken) {
-                                await signInWithCustomToken(auth, initialAuthToken);
-                            } else {
-                                await signInAnonymously(auth);
-                            }
-                        } catch (error) {
-                            console.error("Authentication error:", error);
-                        }
+                        console.error("Database or App ID not initialized after authentication.");
                     }
-                });
-            } else {
-                console.error("Firebase config is not available. Please provide it.");
-            }
-
+                } else {
+                    console.log("User is signed out or not authenticated.");
+                    if (!isCanvasEnvironment) {
+                         try {
+                             await signInAnonymously(auth);
+                         } catch (error) {
+                             console.error("Authentication error:", error);
+                         }
+                    }
+                }
+            });
+        
             // মিউজিক এবং স্প্ল্যাশ স্ক্রিন লজিক
             okButton.addEventListener('click', () => {
                 splashScreen.style.display = 'none';
